@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstdlib>
 #include <list>
+#include <string.h>
 using namespace std;
 using namespace zy;
 
@@ -13,7 +14,7 @@ class TestAllocator : public Allocator
   const int READ_ALLOC_SIZE_OFFSET = -(ALLOC_HEAD_SIZE);
 
  public:
-  char* alloc(std::size_t size)
+  char* alloc_memory(std::size_t size)
   {
     size_t _alloc_size = size + ALLOC_HEAD_SIZE;
     void *ptr = ::malloc(_alloc_size);
@@ -21,7 +22,7 @@ class TestAllocator : public Allocator
     return static_cast<char*>(ptr) + ALLOC_HEAD_SIZE;
   }
 
-  char* realloc(void *ptr, size_t size)
+  char* realloc_memory(void *ptr, size_t size)
   {
     if (ptr != nullptr)
     {
@@ -34,7 +35,7 @@ class TestAllocator : public Allocator
     return static_cast<char*>(ptr) + ALLOC_HEAD_SIZE;
   }
 
-  void free(void *ptr)
+  void free_memory(void *ptr)
   {
     ::free(static_cast<char*>(ptr) + READ_ALLOC_SIZE_OFFSET);
   }
@@ -60,13 +61,11 @@ class Test
   std::list<char> m_lst;
   std::list<char> *m_lst_ptr;
   std::list<char> &m_lst_ref;
-  std::list<char> *m_lst_ptr_alloc;
   Test_ref *m_test_ref_ptr;
  public:
   Test()
     : m_lst_ptr(&m_lst),
       m_lst_ref(m_lst),
-      m_lst_ptr_alloc(g_new<std::list<char> >(g_allocator)),
       m_test_ref_ptr(g_new<Test_ref>(g_allocator, m_lst))
   {
 
@@ -122,6 +121,9 @@ class Test
   ~Test()
   {
     cout << "Test::~Test()" << endl;
+    if (m_test_ref_ptr != nullptr) {
+      g_delete(m_test_ref_ptr);
+    }
   }
 };
 
@@ -147,5 +149,15 @@ int main()
   cout << "ref " << (void*)(&ref) << endl;
   Ref_test<int> *_ref = g_new<Ref_test<int>, 3>(g_allocator, ref);
   g_delete(_ref);
+
+  char *str = g_alloc(g_allocator, 10);
+  strcpy(str, "hi, zy.");
+  cout << "print str: " << str << endl;
+
+  char *str2 = g_realloc(str, 15);
+  cout << "print str2: " << str2 << endl;
+  
+  g_free(str2);
+
   return 0;
 }

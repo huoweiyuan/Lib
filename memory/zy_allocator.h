@@ -14,10 +14,10 @@ class Allocator
    static const short READ_OBJ_NUM_OFFSET = -(OBJ_NUM_HEAD_SIZE) -(OBJ_PTR_HEAD_SIZE);
    static const short READ_OBJ_PTR_OFFSET = -(OBJ_PTR_HEAD_SIZE);
 
- public:
-   virtual char* alloc(std::size_t size) = 0;
-   virtual char* realloc(void *ptr, size_t size) = 0;
-   virtual void free(void *ptr) = 0;
+ private:
+   virtual char* alloc_memory(std::size_t size) = 0;
+   virtual char* realloc_memory(void *ptr, size_t size) = 0;
+   virtual void free_memory(void *ptr) = 0;
 
  public:
    // |obj num|obj pointer|xxxx
@@ -60,27 +60,27 @@ class Allocator
 
  public:
    // |obj pointer|xxxx
-   char* alloc_memory(size_t size) {
-     char* _ptr = alloc(size + OBJ_PTR_HEAD_SIZE);
+   char* alloc(size_t size) {
+     char* _ptr = alloc_memory(size + OBJ_PTR_HEAD_SIZE);
      if (_ptr == nullptr) 
        return nullptr;
      *(reinterpret_cast<Allocator**>(_ptr)) = this;
      return _ptr + OBJ_PTR_HEAD_SIZE;
    }
 
-   char* realloc_memory(void *ptr, size_t size) {
+   char* realloc(void *ptr, size_t size) {
      if (ptr == nullptr) 
        return nullptr;
-     char *_ptr = realloc(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET, size + OBJ_PTR_HEAD_SIZE);
+     char *_ptr = realloc_memory(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET, size + OBJ_PTR_HEAD_SIZE);
      if (_ptr == nullptr)
        return nullptr;
      return _ptr + OBJ_PTR_HEAD_SIZE;
    }
 
-   void free_memory(void *ptr) {
+   void free(void *ptr) {
      if (ptr == nullptr)
        return;
-     free(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET);
+     free_memory(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET);
    }
 
  public:
@@ -145,6 +145,7 @@ void g_delete(ClassName *ptr)
     return;
   allocator->delete_obj(ptr);
 }
+
 }
 
 #endif // _ZY_ALLOCATOR_
