@@ -92,7 +92,7 @@ class Allocator
      if (ptr == nullptr)
        return nullptr;
      return *(reinterpret_cast<Allocator**>(
-       static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET));
+         static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET));
    }
 };
 
@@ -127,7 +127,7 @@ inline void g_free(void *ptr)
   allocator->free(ptr);
 }
 
-  template<typename ClassName, size_t Num = 1, typename... P>
+template<typename ClassName, size_t Num = 1, typename... P>
 ClassName* g_new(Allocator *allocator, P&&... args)
 {
   if (allocator == nullptr)
@@ -136,7 +136,7 @@ ClassName* g_new(Allocator *allocator, P&&... args)
   return _ptr;
 }
 
-  template<typename ClassName>
+template<typename ClassName>
 void g_delete(ClassName *ptr)
 {
   Allocator *allocator = nullptr;
