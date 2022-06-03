@@ -4,8 +4,6 @@
 #include <cstddef>
 #include <utility>
 
-namespace zy
-{
 class Allocator
 {
  private:
@@ -71,7 +69,8 @@ class Allocator
    char* realloc(void *ptr, size_t size) {
      if (ptr == nullptr) 
        return nullptr;
-     char *_ptr = realloc_memory(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET, size + OBJ_PTR_HEAD_SIZE);
+     char *_ptr = realloc_memory(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET,
+                                 size + OBJ_PTR_HEAD_SIZE);
      if (_ptr == nullptr)
        return nullptr;
      return _ptr + OBJ_PTR_HEAD_SIZE;
