@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <utility>
 
+namespace zy
+{
 class Allocator
 {
  private:
