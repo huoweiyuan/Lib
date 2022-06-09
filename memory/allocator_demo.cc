@@ -150,11 +150,11 @@ int main()
   Ref_test<int> *_ref = g_new<Ref_test<int>, 3>(g_allocator, ref);
   g_delete(_ref);
 
-  char *str = g_alloc(g_allocator, 10);
+  char *str = static_cast<char*>(g_alloc(g_allocator, 10));
   strcpy(str, "hi, zy.");
   cout << "print str: " << str << endl;
 
-  char *str2 = g_realloc(str, 15);
+  char *str2 = static_cast<char*>(g_realloc(str, 15));
   cout << "print str2: " << str2 << endl;
   
   g_free(str2);

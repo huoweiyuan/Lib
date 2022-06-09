@@ -26,7 +26,7 @@ class Allocator
      {
        const size_t _class_size = sizeof(ClassName);
        char *_ptr = 
-         alloc(_class_size * Num + OBJ_NUM_HEAD_SIZE + OBJ_PTR_HEAD_SIZE);
+         alloc_memory(_class_size * Num + OBJ_NUM_HEAD_SIZE + OBJ_PTR_HEAD_SIZE);
        if (_ptr == nullptr)
          return nullptr;
 
@@ -55,12 +55,12 @@ class Allocator
        {
          (_destruct_ptr + i)->~ClassName();
        }
-       free(_alloced_ptr);
+       free_memory(_alloced_ptr);
      }
 
  public:
    // |obj pointer|xxxx
-   char* alloc(size_t size) {
+   void* alloc(size_t size) {
      char* _ptr = alloc_memory(size + OBJ_PTR_HEAD_SIZE);
      if (_ptr == nullptr) 
        return nullptr;
@@ -68,7 +68,7 @@ class Allocator
      return _ptr + OBJ_PTR_HEAD_SIZE;
    }
 
-   char* realloc(void *ptr, size_t size) {
+   void* realloc(void *ptr, size_t size) {
      if (ptr == nullptr) 
        return nullptr;
      char *_ptr = realloc_memory(static_cast<char*>(ptr) + READ_OBJ_PTR_OFFSET,
@@ -102,14 +102,14 @@ class Allocator
 namespace zy
 {
 
-inline char* g_alloc(Allocator *allocator, size_t size)
+inline void* g_alloc(Allocator *allocator, size_t size)
 {
   if (allocator == nullptr)
     return nullptr;
   return allocator->alloc(size);
 }
 
-inline char* g_realloc(void *ptr, size_t size)
+inline void* g_realloc(void *ptr, size_t size)
 {
   Allocator *allocator = nullptr; 
   if (ptr == nullptr || 
