@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <functional>
-#include "zyThread.h"
+#include "zy_thread.h"
 #include <iostream>
 
 namespace zy
@@ -100,7 +100,7 @@ class TimerImpl : public Timer, public Thread
   
  public:
 
-  int thrdRoutine(void) override
+  int thrd_routine(void) override
   {
     sleepTimeMillis(mSleepMillis);
     checkTimeExpire();
